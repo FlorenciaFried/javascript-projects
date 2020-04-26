@@ -41,7 +41,7 @@ Seguro.prototype.cotizarSeguro = function () {
 function Interfaz() {}
 
 //Mensaje que se imprime en el HTML
-Interfaz.prototype.mostrarError = function (mensaje, tipo) {
+Interfaz.prototype.mostrarMensaje = function (mensaje, tipo) {
   const div = document.createElement("div");
 
   if (tipo === "error") {
@@ -56,7 +56,43 @@ Interfaz.prototype.mostrarError = function (mensaje, tipo) {
   //Eliminar el mensaje despues de 3 segundos
   setTimeout(function () {
     document.querySelector(".mensaje").remove();
-  }, 3000);
+  }, 2000);
+};
+
+// Imprime el resultado de la cotizacion
+Interfaz.prototype.mostarResultado = function (seguro, cantidad) {
+  const resultado = document.getElementById("resultado");
+  let marca;
+
+  switch (seguro.marca) {
+    case "1":
+      marca = "Americano";
+      break;
+    case "2":
+      marca = "Asiatico";
+      break;
+    case "3":
+      marca = "Europeo";
+      break;
+  }
+
+  // Crear div
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <p class="header">Resumen</p>
+    <p>Marca: ${marca}</p>
+    <p>Anio: ${seguro.anio}</p>
+    <p>Tipo: ${seguro.tipo}</p>
+    <p>Total: $${cantidad}</p>
+  `;
+
+  // Spinner y agregamos el div
+  const spinner = document.querySelector("#cargando img");
+  spinner.style.display = "block";
+  setTimeout(function () {
+    spinner.style.display = "none";
+    resultado.appendChild(div);
+  }, 2000);
 };
 
 // Event Listenners
@@ -82,15 +118,26 @@ formulario.addEventListener("submit", function (e) {
   // Revisamos que los campos no esten vacios
   if (marcaSeleccionada === "" || anioSeleccionado === "" || tipo === "") {
     // Inerfaz imprimiendo un error
-    interfaz.mostrarError("Faltan datos, completar el formulario", "error");
+    interfaz.mostrarMensaje("Faltan datos, completar el formulario", "error");
   } else {
+    // Limpiar resultados anteriores
+    const resultados = document.querySelector("#resultado div");
+    if (resultados != null) {
+      resultados.remove();
+    }
+
     // Instanciar seguro y mostrar interfaz
     const seguro = new Seguro(marcaSeleccionada, anioSeleccionado, tipo);
 
-    //Cotizar el seguro
+    // Cotizar el seguro
     const cantidad = seguro.cotizarSeguro();
+
+    // Mostrar el resultado en la interfaz
+    interfaz.mostarResultado(seguro, cantidad);
+    interfaz.mostrarMensaje("Cotizando...", "correcto");
   }
 });
+
 
 const anioActual = new Date();
 const max = anioActual.getFullYear();

@@ -45,9 +45,27 @@ class Interfaz {
 
     // Sacar el mensaje de error despues de 3seg
     setTimeout(function () {
-      document.querySelector(".primario .alert").remove();
       formulario.reset();
     }, 3000);
+  }
+
+  // Inserta los gastos a la lista
+  agregarGastoListado(nombre, cantidad) {
+    const gastosListado = document.querySelector("#gastos ul");
+
+    //Crear un LI
+    const li = document.createElement("li");
+    li.className =
+      "list-group-item d-flex justify-content-between align-items-center";
+
+    // Insertar el gasto
+    li.innerHTML = `
+        ${nombre} 
+        <span class="badge badge-primary badge-pill"> $ ${cantidad} </span>
+    `;
+
+    // Poner el gasto en el HTML
+    gastosListado.appendChild(li);
   }
 }
 
@@ -69,7 +87,7 @@ formulario.addEventListener("submit", function (e) {
   e.preventDefault();
 
   // Leer del formulario de gastos
-  const nombreGasto = document.querySelector("#gasto");
+  const nombreGasto = document.querySelector("#gasto").value;
   const cantidadGasto = document.querySelector("#cantidad").value;
 
   // Instanciar la interfaz
@@ -80,5 +98,8 @@ formulario.addEventListener("submit", function (e) {
     // 2 parametros: mensaje y tipo
     ui.imprmirMensaje("Hubo un error", "error");
   } else {
+    // Insertar en el HTML
+    ui.imprmirMensaje("Correcto", "correcto");
+    ui.agregarGastoListado(nombreGasto, cantidadGasto);
   }
 });

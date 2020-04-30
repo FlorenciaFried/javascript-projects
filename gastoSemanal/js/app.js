@@ -1,0 +1,84 @@
+// Variables
+const presupuestoUsuario = prompt("Cual es tu presupuesto semanal?");
+const formulario = document.getElementById("agregar-gasto");
+let cantidadPresupuesto;
+
+// Clases
+// Clase de presupuesto
+class Presupuesto {
+  constructor(presupuesto) {
+    this.presupuesto = Number(presupuesto);
+    this.restante = Number(presupuesto);
+  }
+
+  // Metodo para ir restanto del presupuesto actual
+  presupuestoRestante(cantidad = 0) {
+    return (this.restante -= Number(cantidad));
+  }
+}
+
+// Maneja todo lo relacionado al HTML
+class Interfaz {
+  insertarPresupuesto(cantidad) {
+    const presupuestoSpan = document.querySelector("span#total");
+    const restanteSpan = document.querySelector("span#restante");
+
+    // Insertar al HTML el presupuesto y el restante
+    presupuestoSpan.innerHTML = `${cantidad}`;
+    restanteSpan.innerHTML = `${cantidad}`;
+  }
+
+  imprmirMensaje(mensaje, tipo) {
+    const divMensaje = document.createElement("div");
+    divMensaje.classList.add("text-center", "alert");
+
+    if (tipo === "error") {
+      divMensaje.classList.add("alert-danger");
+    } else {
+      divMensaje.classList.add("alert-success");
+    }
+
+    divMensaje.appendChild(document.createTextNode(mensaje));
+
+    // Insertar en el DOM
+    document.querySelector(".primario").insertBefore(divMensaje, formulario);
+
+    // Sacar el mensaje de error despues de 3seg
+    setTimeout(function () {
+      document.querySelector(".primario .alert").remove();
+      formulario.reset();
+    }, 3000);
+  }
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", function () {
+  if (presupuestoUsuario === null || presupuestoUsuario == "") {
+    window.location.reload();
+  } else {
+    // Instanciar el presupuesto
+    cantidadPresupuesto = new Presupuesto(presupuestoUsuario);
+
+    // Instanciar la clase de Interfaz
+    const ui = new Interfaz();
+    ui.insertarPresupuesto(cantidadPresupuesto.presupuesto);
+  }
+});
+
+formulario.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  // Leer del formulario de gastos
+  const nombreGasto = document.querySelector("#gasto");
+  const cantidadGasto = document.querySelector("#cantidad").value;
+
+  // Instanciar la interfaz
+  const ui = new Interfaz();
+
+  // Comprobar que los campos no esten vacios
+  if (nombreGasto === "" || cantidadGasto === "") {
+    // 2 parametros: mensaje y tipo
+    ui.imprmirMensaje("Hubo un error", "error");
+  } else {
+  }
+});
